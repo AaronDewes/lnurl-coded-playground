@@ -1,8 +1,15 @@
 <script>
-  import bech32 from 'bech32'
+  import {bech32} from 'bech32'
 
   var input = ''
   var output = ''
+
+  function isLightningAddress(address) {
+    // ensure only 1 `@` present:
+    if (address.split('@').length !== 2) return false;
+    const splitted = address.split('@');
+    return !!splitted[0].trim() && !!splitted[1].trim();
+  }
 
   function islnurl(s) {
     s = input.toLowerCase()
@@ -14,6 +21,8 @@
     e.preventDefault()
     if (islnurl(input)) {
       output = decode(input)
+    } else if (isLightningAddress(input)) {
+      output = encode(`https://${input.split("@")[1]}/.well-known/lnurlp/${input.split("@")[0]}`)
     } else {
       output = encode(input)
     }
